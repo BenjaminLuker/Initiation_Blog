@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Clean Blog - Start Bootstrap Theme</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="css/clean-blog.min.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('img/home-bg.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="site-heading">
+              <h1>Initiation Blog</h1>
+              <span class="subheading">A Mixed Reality Studio Project by Ben Luker</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-preview">
+              <h2 class="post-title">
+                Fixed Joint Grab
+              </h2>
+              <p class="post-subtitle">
+                The first thing I wanted to do was make the grabbing physics based. Before I was simply translating and rotating the knife relative to the controller. This means if I put my controller through a virtual object, the knife would go directly through that object. With a fixed joint, the knife will effectively behave the same, but will be forced out of the player’s hand if this happens. Adding the fixed joint was pretty easy. I modified the grab script so that when the object is initially grabbed, it assigns a fixed joint to the knife with the controller as the connected body with a break force. When the trigger is released, it manually destroys the fixed joint. Because the fixed joint is doing all of the work tracking the knife for me, I can delete the function that updates the position and rotation of the knife.
+              </p>
+          </div>
+          <hr>
+          <div class="post-preview">
+              <h2 class="post-title">
+                Knife Sticking
+              </h2>
+              <p class="post-subtitle">
+                Now that the fixed joint grab is out of the way, I want to create an actual method of sticking my knife to the wall. Before, I was just turning off physics on the knife when it collided with a wall by making the object kinematic. Now I’m going to use another fixed joint to attach the knife to a surface. I’m making the fixed joint on the knife and making the connected body the environment. And because the break force of the grab fixed joint is greater than the break force of the environment fixed joint, the grab fixed joint should always be able to pull the knife out of a surface.
+              </p>
+          </div>
+          <hr>
+                    <div class="post-preview">
+              <h2 class="post-title">
+                Update on Knife Sticking
+              </h2>
+              <p class="post-subtitle">
+                I implemented the fixed joint sticking, but it is not behaving the way I want. Fixed joints do not operate the way I thought they would. If an object has a big enough force put on it, it will break the joint it has with another body. But when it is getting pushed, it will bend to whatever is pushing it before breaking. I wanted it to be rigid until the connection was broken. But the way it is now, when the player goes to grab the knife, it will be in their hand even when the connection is not broken, meaning there is no point to having to pull it out hard. I’ve decided that I will use a fixed joint to attach the knife to a surface, but once the connection is established, I’m keeping the knife in a fixed point through code. Once the player grabs and pulls away from the knife, I break the connection between the knife and the surface, so it goes to the player’s hand.
+              </p>
+          </div>
+          <hr>
+                    <div class="post-preview">
+              <h2 class="post-title">
+                Grab While Stuck
+              </h2>
+              <p class="post-subtitle">
+                Now that I have an actual stick and pull mechanic, I need the knife to understand this with a state machine. I’ve made a state called GrabWhileStuck that makes the controller vibrate while it’s in this state. So now it feels like you’re really pulling on the knife to get it to come out. But then I had a problem where, once the knife was pulled out, it would fall to the ground instead of regrabbing. So I made a Regrab function that does this.
+              </p>
+          </div>
+          <hr>
+                    <div class="post-preview">
+              <h2 class="post-title">
+                Multiple Vive Camera Rigs
+              </h2>
+              <p class="post-subtitle">
+                It is now time that I implement the most important mechanic to my game, which is the idea of being able to see a knife that has been thrown. This is actually much easier than I thought it would be. I simply spawn a Camera Rig directly below the knife, have the knife on its own layer, and set the camera to depth. This makes the knife also appear at the center of the playspace.
+              </p>
+          </div>
+          <hr>
+                    <div class="post-preview">
+              <h2 class="post-title">
+                Scrap That
+              </h2>
+              <p class="post-subtitle">
+                There’s actually a problem with the multiple vive camera rigs. My computer cannot handle tracking more than one headset and controllers to the point where it crashes when I try and do so. The showcase is in less than a week, so I have way less time to work on this than I would like. So now, instead of spawning a camera rig where the knife is, I have to instantiate a new knife at the center of the playspace that looks similar enough to the original knife that no one can tell the difference. This means instantiating it at the right rotation and having it be in the correct state. So now, I spawn a knife already stuck to an invisible cube with no physics interactions, and when the player grabs it, it spawns a knife already in their hand and destroys the original knife. Doing this actually took less time than I had imagined it would. 
+              </p>
+          </div>
+          <hr>
+                    <div class="post-preview">
+              <h2 class="post-title">
+                Teleporting
+              </h2>
+              <p class="post-subtitle">
+                Now I have to implement the teleporting. I have a separate knife teleport script to do this. The script goes through several processes to make sure that the player should be able to teleport to it, then if the player holds the grip button when they grab the phantom knife, they teleport to the original knife with it now in their hand.
+              </p>
+          </div>
+          <hr>
+                    <div class="post-preview">
+              <h2 class="post-title">
+                Building Out the Level
+              </h2>
+              <p class="post-subtitle">
+                I have only 1 day before the showcase now. I need to build out my level. I already messed around with some assets and lighting and know what I want. I want the entire scene to look like an empty void of darkness. The only platforms to work with are illuminated by spotlights. I’ve added targets with animations that fall when hit in the head depending on which side they’ve been hit on. I’ve also added a respawn knife button with the touchpad so that the players can get the knife if the game glitches and it is nowhere to be found. I’ve also done some final touches like adding a tutorial wall with the controls using spotlight cookies. And with that, I’m pretty much done.
+              </p>
+          </div>
+          <hr>
+          <!-- Pager -->
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
